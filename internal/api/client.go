@@ -57,15 +57,19 @@ func (c *SourceCraftClient) DoRequest(method, path string, body interface{}) (ma
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
+	var result map[string]interface{}
+
 	if resp.StatusCode != http.StatusOK {
 		var apiError APIErrorResponse
 		if err := json.Unmarshal(responseBody, &apiError); err == nil {
+			if resp.StatusCode == 201 {
+				return result, nil
+			}
 			return nil, fmt.Errorf("API error %d: %s (code: %s)", resp.StatusCode, apiError.Message, apiError.ErrorCode)
 		}
 		return nil, fmt.Errorf("HTTP error %d: %s", resp.StatusCode, string(responseBody))
 	}
 
-	var result map[string]interface{}
 	if err := json.Unmarshal(responseBody, &result); err != nil {
 		return nil, fmt.Errorf("failed to parse response: %w", err)
 	}
