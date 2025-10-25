@@ -24,7 +24,7 @@ func NewSourceCraftClient(token string) *SourceCraftClient {
 	}
 }
 
-func (c *SourceCraftClient) doRequest(method, path string) ([]byte, error) {
+func (c *SourceCraftClient) DoRequest(method, path string) (map[string]interface{}, error) {
 	url := c.baseURL + path
 
 	req, err := http.NewRequest(method, url, nil)
@@ -55,5 +55,11 @@ func (c *SourceCraftClient) doRequest(method, path string) ([]byte, error) {
 		return nil, fmt.Errorf("HTTP error %d: %s", resp.StatusCode, string(body))
 	}
 
-	return body, nil
+	var result map[string]interface{}
+	if err := json.Unmarshal(body, &result); err != nil {
+		fmt.Printf("Ошибка при парсе ответа: %v", err)
+	}
+
+	fmt.Println("Result:", result)
+	return result, nil
 }
