@@ -56,7 +56,7 @@ type UpdatePullRequestRequest struct {
 	Description string   `json:"description,omitempty"`
 }
 
-type ListOrganizationRepositoriesResponse struct {
+type ListRepositoriesResponse struct {
 	Repositories  []Repository `json:"repositories"`
 	NextPageToken string       `json:"next_page_token,omitempty"`
 }
