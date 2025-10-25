@@ -4,15 +4,14 @@ import (
 	"bufio"
 	"os/exec"
 	"strings"
+	"time"
 )
 
-// readLine читает одну строку из STDIN
 func ReadLine(reader *bufio.Reader) string {
 	input, _ := reader.ReadString('\n')
 	return strings.TrimSpace(input)
 }
 
-// parseCommaSeparatedList очищает список, введенный через запятую
 func ParseCommaSeparatedList(input string) []string {
 	ids := strings.Split(input, ",")
 	cleanedIDs := make([]string, 0, len(ids))
@@ -25,12 +24,19 @@ func ParseCommaSeparatedList(input string) []string {
 	return cleanedIDs
 }
 
-// getCurrentGitBranch (бонус) пытается получить имя текущей ветки git
 func GetCurrentGitBranch() string {
 	cmd := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD")
 	output, err := cmd.Output()
 	if err != nil {
-		return "" // Не в git репозитории или git не найден
+		return ""
 	}
 	return strings.TrimSpace(string(output))
+}
+
+func FormatDate(dateStr string) string {
+	t, err := time.Parse(time.RFC3339, dateStr)
+	if err != nil {
+		return dateStr
+	}
+	return t.Format("02.01.2006 15:04")
 }
