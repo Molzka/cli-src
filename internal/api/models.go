@@ -51,7 +51,20 @@ const (
 )
 
 type UpdatePullRequestRequest struct {
-	Status      PRStatus `json:"status,omitempty"`
-	Title       string   `json:"title,omitempty"`
-	Description string   `json:"description,omitempty"`
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
 }
+
+type MergePullRequestRequest struct {
+	MergeParameters *MergeParameters `json:"merge_parameters,omitempty"`
+	Silent          bool             `json:"silent,omitempty"`
+}
+
+type ReviewDecision string
+
+const (
+	ReviewDecisionApprove ReviewDecision = "approve"
+	ReviewDecisionTrust   ReviewDecision = "trust"
+	ReviewDecisionBlock   ReviewDecision = "block"
+	ReviewDecisionAbstain ReviewDecision = "abstain"
+)

@@ -17,11 +17,11 @@ func GetPrList(reponame string) (map[string]interface{}, error) {
 	return body, err
 }
 
-func GetPullRequest(reponame, prSlug string) (*PullRequest, error) {
+func GetPullRequest(prId string) (*PullRequest, error) {
 	token, _ := config.LoadToken()
 	client := NewSourceCraftClient(token)
 
-	path := fmt.Sprintf("/repos/%s/pulls/%s", reponame, prSlug)
+	path := fmt.Sprintf("/pulls/id:%s", prId)
 
 	body, err := client.DoRequest("GET", path, nil)
 
@@ -39,8 +39,8 @@ func GetPullRequest(reponame, prSlug string) (*PullRequest, error) {
 	return &pr, nil
 }
 
-func PublishPullRequest(reponame, prSlug string) error {
-	path := fmt.Sprintf("/repos/%s/pulls/%s/publish", reponame, prSlug)
+func PublishPullRequest(prId string) error {
+	path := fmt.Sprintf("/pulls/id:%s/publish", prId)
 	token, _ := config.LoadToken()
 	client := NewSourceCraftClient(token)
 
@@ -54,16 +54,43 @@ func PublishPullRequest(reponame, prSlug string) error {
 	return nil
 }
 
-func UpdatePullRequestStatus(reponame, prSlug string, status PRStatus) (*PullRequest, error) {
-	path := fmt.Sprintf("/repos/%s/pulls/%s", reponame, prSlug)
+func MergePullRequest(prId string) (*PullRequest, error) {
+	pr, err := GetPullRequest(prId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get PR: %w", err)
+	}
+
+	fmt.Printf("Current PR status: %s\n", pr.Status)
+
+	if pr.Status == PRStatusDraft {
+		fmt.Println("Publishing draft PR...")
+		if err := PublishPullRequest(prId); err != nil {
+			return nil, fmt.Errorf("failed to publish PR: %w", err)
+		}
+	}
+
+	fmt.Println("Approving PR...")
+	_, err = UpdatePullRequestDecision(prId, ReviewDecisionApprove)
+	if err != nil {
+		return nil, fmt.Errorf("failed to approve PR: %w", err)
+	}
+
+	fmt.Printf("PR successfully moved to merging status\n")
+	return nil, nil
+}
+
+func UpdatePullRequestDecision(prId string, decision ReviewDecision) (*PullRequest, error) {
+	path := fmt.Sprintf("/pulls/id:%s/decision", prId)
 	token, _ := config.LoadToken()
 	client := NewSourceCraftClient(token)
 
-	updateReq := UpdatePullRequestRequest{
-		Status: status,
+	decisionReq := struct {
+		ReviewDecision ReviewDecision `json:"review_decision"`
+	}{
+		ReviewDecision: decision,
 	}
 
-	body, err := client.DoRequest("PATCH", path, updateReq)
+	body, err := client.DoRequest("POST", path, decisionReq)
 	if err != nil {
 		return nil, err
 	}
@@ -76,47 +103,4 @@ func UpdatePullRequestStatus(reponame, prSlug string, status PRStatus) (*PullReq
 	}
 
 	return &pr, nil
-}
-
-func MergePullRequest(reponame, prSlug string) (*PullRequest, error) {
-	pr, err := GetPullRequest(reponame, prSlug)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get PR: %w", err)
-	}
-
-	fmt.Printf("Current PR status: %s\n", pr.Status)
-
-	if pr.Status == PRStatusDraft {
-		fmt.Println("Publishing draft PR...")
-		if err := PublishPullRequest(reponame, prSlug); err != nil {
-			return nil, fmt.Errorf("failed to publish PR: %w", err)
-		}
-		pr, err = GetPullRequest(reponame, prSlug)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get PR after publishing: %w", err)
-		}
-	}
-
-	if pr.Status != PRStatusOpen {
-		return nil, fmt.Errorf("PR is not in open status, current status: %s", pr.Status)
-	}
-
-	fmt.Println("Initiating merge...")
-	mergedPR, err := UpdatePullRequestStatus(reponame, prSlug, PRStatusMerging)
-	if err != nil {
-		return nil, fmt.Errorf("failed to update PR status to merging: %w", err)
-	}
-
-	fmt.Printf("PR successfully moved to merging status\n")
-
-	if mergedPR.MergeInfo != nil {
-		if mergedPR.MergeInfo.Error != "" {
-			return nil, fmt.Errorf("merge failed: %s", mergedPR.MergeInfo.Error)
-		}
-		if mergedPR.MergeInfo.MergeCommitHash != "" {
-			fmt.Printf("Merge completed successfully. Merge commit: %s\n", mergedPR.MergeInfo.MergeCommitHash)
-		}
-	}
-
-	return mergedPR, nil
 }

@@ -6,7 +6,6 @@ import (
 	"os"
 	"src/internal/api"
 	"src/internal/utils"
-	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -53,16 +52,8 @@ func printPullRequests(body map[string]interface{}) {
 			fmt.Printf("│ Author:       %s\n", author["slug"])
 		}
 
-		fmt.Printf("│ Created:      %v\n", formatDate(prMap["created_at"].(string)))
-		fmt.Printf("│ Updated:      %v\n", formatDate(prMap["updated_at"].(string)))
+		fmt.Printf("│ Created:      %v\n", utils.FormatDate(prMap["created_at"].(string)))
+		fmt.Printf("│ Updated:      %v\n", utils.FormatDate(prMap["updated_at"].(string)))
 		fmt.Printf("└─────────────────────────────────────────────────────\n\n")
 	}
-}
-
-func formatDate(dateStr string) string {
-	t, err := time.Parse(time.RFC3339, dateStr)
-	if err != nil {
-		return dateStr
-	}
-	return t.Format("02.01.2006 15:04")
 }
