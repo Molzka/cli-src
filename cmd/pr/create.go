@@ -155,12 +155,12 @@ var createCmd = &cobra.Command{
 		fmt.Printf("Source: %s -> Target: %s\n", payload.SourceBranch, payload.TargetBranch)
 		fmt.Printf("Publish (Ready): %t\n", payload.Publish)
 		fmt.Println("----------------------")
-
 		fmt.Println("Вызов вашей функции sendRequest(payload)...")
 
 		//
 		// ЗДЕСЬ ВЫЗЫВАЙТЕ ВАШУ ФУНКЦИЮ
 		//
+
 		// err := sendRequest(payload)
 		// if err != nil {
 		// 	 return fmt.Errorf("ошибка при отправке запроса: %w", err)
