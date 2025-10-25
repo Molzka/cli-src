@@ -13,4 +13,5 @@ func init() {
 	PrCmd.AddCommand(listCmd)
 	PrCmd.AddCommand(createCmd)
 	PrCmd.AddCommand(viewCmd)
+	PrCmd.AddCommand(mergeCmd)
 }

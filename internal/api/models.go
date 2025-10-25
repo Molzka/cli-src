@@ -5,7 +5,7 @@ type PullRequest struct {
 	Slug         string            `json:"slug"`
 	Title        string            `json:"title"`
 	Description  string            `json:"description"`
-	Status       string            `json:"status"`
+	Status       PRStatus          `json:"status"`
 	SourceBranch string            `json:"source_branch"`
 	TargetBranch string            `json:"target_branch"`
 	Author       map[string]string `json:"author"`
@@ -13,6 +13,7 @@ type PullRequest struct {
 	UpdatedAt    string            `json:"updated_at"`
 	UpdatedBy    map[string]string `json:"updated_by"`
 	Repository   map[string]string `json:"repository"`
+	MergeInfo    *MergeInfo        `json:"merge_info"`
 }
 
 type UserEmbedded struct {
