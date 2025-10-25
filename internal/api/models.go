@@ -103,3 +103,51 @@ type RepositoryRef struct {
 	ID   string `json:"id"`
 	Slug string `json:"slug"`
 }
+
+type InitRepoSettings struct {
+	DefaultBranch       string   `json:"default_branch,omitempty"`
+	CreateReadme        bool     `json:"create_readme"`
+	GitignorePresets    []string `json:"gitignore_presets,omitempty"`
+	LicenseSlug         string   `json:"license_slug,omitempty"`
+	SrcYamlTemplateSlug string   `json:"src_yaml_template_slug,omitempty"`
+}
+
+type TemplatingOptions struct {
+	TemplateID string `json:"template_id"`
+}
+
+type CreateRepositoryBody struct {
+	Name              string             `json:"name"`
+	Slug              string             `json:"slug"`
+	Description       string             `json:"description,omitempty"`
+	Visibility        string             `json:"visibility,omitempty"`
+	InitSettings      *InitRepoSettings  `json:"init_settings,omitempty"`
+	TemplatingOptions *TemplatingOptions `json:"templating_options,omitempty"`
+}
+
+type ForkRepositoryBody struct {
+	OrgSlug           string `json:"org_slug,omitempty"`
+	OrgID             string `json:"org_id,omitempty"`
+	Slug              string `json:"slug,omitempty"`
+	DefaultBranchOnly bool   `json:"default_branch_only,omitempty"`
+}
+
+type ForkRepositoryResponse struct {
+	ID           string               `json:"id"`
+	Name         string               `json:"name"`
+	Slug         string               `json:"slug"`
+	Description  string               `json:"description"`
+	CloneURL     CloneURL             `json:"clone_url"`
+	Organization OrganizationEmbedded `json:"organization"`
+	Parent       *RepositoryEmbedded  `json:"parent,omitempty"`
+}
+
+type OrganizationEmbedded struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+}
+
+type RepositoryEmbedded struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+}

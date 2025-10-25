@@ -13,4 +13,6 @@ func init() {
 	RepoCmd.AddCommand(listCmd)
 	RepoCmd.AddCommand(createCmd)
 	RepoCmd.AddCommand(viewCmd)
+	RepoCmd.AddCommand(cloneCmd)
+	RepoCmd.AddCommand(forkCmd)
 }
