@@ -10,10 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	RepoCmd.AddCommand(listCmd)
-}
-
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Войти в систему",
