@@ -14,6 +14,8 @@ type TokenData struct {
 	Timestamp string `json:"timestamp"`
 }
 
+var tokenFilename string = "token.json"
+
 func SaveToken(token string) error {
 	configDir, err := getConfigDir()
 	if err != nil {
@@ -30,7 +32,7 @@ func SaveToken(token string) error {
 		return err
 	}
 
-	configFile := filepath.Join(configDir, "token.json")
+	configFile := filepath.Join(configDir, tokenFilename)
 	return os.WriteFile(configFile, data, 0600)
 }
 
@@ -63,7 +65,7 @@ func LoadToken() (string, error) {
 		return "", err
 	}
 
-	configFile := filepath.Join(configDir, "token.json")
+	configFile := filepath.Join(configDir, tokenFilename)
 	data, err := os.ReadFile(configFile)
 	if err != nil {
 		return "", err
@@ -83,7 +85,7 @@ func DeleteToken() error {
 		return err
 	}
 
-	configFile := filepath.Join(configDir, "token.json")
+	configFile := filepath.Join(configDir, tokenFilename)
 	err = os.Remove(configFile)
 	if err != nil {
 		return err
