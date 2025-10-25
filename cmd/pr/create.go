@@ -4,26 +4,25 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"src/internal/api"
+	"src/internal/config"
 	"strings"
 
 	"github.com/spf13/cobra"
 )
 
-// CreatePullRequestBody — это структура данных для вашего API
 type CreatePullRequestBody struct {
 	Title        string   `json:"title"`
 	Description  string   `json:"description,omitempty"`
 	SourceBranch string   `json:"source_branch"`
 	TargetBranch string   `json:"target_branch"`
-	ForkRepoID   string   `json:"fork_repo_id,omitempty"` // Используем string для ID
+	ForkRepoID   string   `json:"fork_repo_id,omitempty"`
 	ReviewerIDs  []string `json:"reviewer_ids,omitempty"`
 	Publish      bool     `json:"publish"`
 }
 
-// Переменная для хранения нашего payload
 var payload CreatePullRequestBody
 
-// createCmd представляет команду 'pr create'
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Создать Pull Request",
@@ -160,6 +159,18 @@ var createCmd = &cobra.Command{
 		//
 		// ЗДЕСЬ ВЫЗЫВАЙТЕ ВАШУ ФУНКЦИЮ
 		//
+
+		token, err := config.LoadToken()
+
+		if err != nil {
+
+		}
+
+		client := api.NewSourceCraftClient(token)
+
+		result, err := client.DoRequest("POST", "/repos/valeushim-duck-com/test/pulls", payload)
+
+		fmt.Println(result, err)
 
 		// err := sendRequest(payload)
 		// if err != nil {
