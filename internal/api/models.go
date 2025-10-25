@@ -55,3 +55,51 @@ type UpdatePullRequestRequest struct {
 	Title       string   `json:"title,omitempty"`
 	Description string   `json:"description,omitempty"`
 }
+
+type ListOrganizationRepositoriesResponse struct {
+	Repositories  []Repository `json:"repositories"`
+	NextPageToken string       `json:"next_page_token,omitempty"`
+}
+
+type Repository struct {
+	ID            string         `json:"id"`
+	Name          string         `json:"name"`
+	Slug          string         `json:"slug"`
+	Description   string         `json:"description"`
+	Visibility    string         `json:"visibility"`
+	DefaultBranch string         `json:"default_branch"`
+	Organization  Organization   `json:"organization"`
+	CloneURL      CloneURL       `json:"clone_url"`
+	Counters      RepoCounters   `json:"counters"`
+	LastUpdated   string         `json:"last_updated"`
+	Language      *Language      `json:"language,omitempty"`
+	Parent        *RepositoryRef `json:"parent,omitempty"`
+}
+
+type Organization struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+}
+
+type CloneURL struct {
+	HTTPS string `json:"https"`
+	SSH   string `json:"ssh"`
+}
+
+type RepoCounters struct {
+	Forks        string `json:"forks"`
+	PullRequests string `json:"pull_requests"`
+	Issues       string `json:"issues"`
+	Tags         string `json:"tags"`
+	Branches     string `json:"branches"`
+}
+
+type Language struct {
+	Name  string `json:"name"`
+	Color string `json:"color"`
+}
+
+type RepositoryRef struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+}
