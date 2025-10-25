@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"src/cmd/auth"
+	"src/cmd/repo"
+
 
 	"github.com/spf13/cobra"
 )
@@ -17,4 +19,6 @@ func Execute() error {
 
 func init() {
 	rootCmd.AddCommand(auth.AuthCmd)
+	rootCmd.AddCommand(repo.RepoCmd)
+
 }
