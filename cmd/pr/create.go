@@ -35,8 +35,33 @@ var createCmd = &cobra.Command{
 		// Создаем 'reader' один раз для всех вводов
 		reader := bufio.NewReader(os.Stdin)
 
+		// Создаем 'client' для http requests
+		token, err := config.LoadToken()
+
+		if err != nil {
+			return fmt.Errorf("Ошибка инициализации http клиента. Проверьте Ваш Token.")
+		}
+
+		client := api.NewSourceCraftClient(token)
+
 		// ----------------------------------------------------
-		// 1. Title (Обязательно, макс 1024)
+		// 1. Reponame
+		// ----------------------------------------------------
+		var reponame string
+
+		for {
+			fmt.Print("Вставьте название репозитория (username/repo): ")
+			reponame = readLine(reader)
+			_, err := client.DoRequest("GET", fmt.Sprintf("/repos/%s", reponame), nil)
+			if err != nil {
+				fmt.Print("[Ошибка] Репозиторий не существует. Попробуйте снова.")
+				continue
+			}
+			break
+		}
+
+		// ----------------------------------------------------
+		// 2. Title (Обязательно, макс 1024)
 		// ----------------------------------------------------
 		// Получаем 'title' из флага
 		title, _ := cmd.Flags().GetString("title")
@@ -60,7 +85,7 @@ var createCmd = &cobra.Command{
 		payload.Title = title
 
 		// ----------------------------------------------------
-		// 2. Description (Опционально)
+		// 3. Description (Опционально)
 		// ----------------------------------------------------
 		description, _ := cmd.Flags().GetString("body")
 		if !cmd.Flags().Changed("body") {
@@ -71,7 +96,7 @@ var createCmd = &cobra.Command{
 		payload.Description = description
 
 		// ----------------------------------------------------
-		// 3. Source Branch (Обязательно)
+		// 4. Source Branch (Обязательно)
 		// ----------------------------------------------------
 		sourceBranch, _ := cmd.Flags().GetString("head")
 		if sourceBranch == "" {
@@ -98,7 +123,7 @@ var createCmd = &cobra.Command{
 		payload.SourceBranch = sourceBranch
 
 		// ----------------------------------------------------
-		// 4. Target Branch (Обязательно, с default)
+		// 5. Target Branch (Обязательно, с default)
 		// ----------------------------------------------------
 		// У флага уже есть default "main", поэтому промпт не нужен.
 		// Cobra автоматически присвоит "main", если флаг не указан.
@@ -106,7 +131,7 @@ var createCmd = &cobra.Command{
 		payload.TargetBranch = targetBranch
 
 		// ----------------------------------------------------
-		// 5. Reviewer IDs (Опционально, список)
+		// 6. Reviewer IDs (Опционально, список)
 		// ----------------------------------------------------
 		reviewers, _ := cmd.Flags().GetStringSlice("reviewers")
 		if !cmd.Flags().Changed("reviewers") {
@@ -119,7 +144,7 @@ var createCmd = &cobra.Command{
 		payload.ReviewerIDs = reviewers
 
 		// ----------------------------------------------------
-		// 6. Publish (Логика 'draft')
+		// 7. Publish (Логика 'draft')
 		// ----------------------------------------------------
 		// API ожидает 'publish', а флаг удобнее назвать '--draft'
 		isDraft, _ := cmd.Flags().GetBool("draft")
@@ -146,7 +171,7 @@ var createCmd = &cobra.Command{
 		payload.Publish = !isDraft
 
 		// ----------------------------------------------------
-		// 7. ОТПРАВКА ДАННЫХ
+		// 8. ОТПРАВКА ДАННЫХ
 		// ----------------------------------------------------
 		fmt.Println("\n✅ Данные успешно собраны!")
 		fmt.Println("----------------------")
@@ -160,25 +185,13 @@ var createCmd = &cobra.Command{
 		// ЗДЕСЬ ВЫЗЫВАЙТЕ ВАШУ ФУНКЦИЮ
 		//
 
-		token, err := config.LoadToken()
+		_, err = client.DoRequest("POST", fmt.Sprintf("/repos/%s/pulls", reponame), payload)
 
 		if err != nil {
-
+			return fmt.Errorf("ошибка при отправке запроса: %w", err)
 		}
 
-		client := api.NewSourceCraftClient(token)
-
-		result, err := client.DoRequest("POST", "/repos/valeushim-duck-com/test/pulls", payload)
-
-		fmt.Println(result, err)
-
-		// err := sendRequest(payload)
-		// if err != nil {
-		// 	 return fmt.Errorf("ошибка при отправке запроса: %w", err)
-		// }
-		//
-
-		fmt.Println("Pull Request успешно создан (симуляция).")
+		fmt.Println("Pull Request успешно создан!")
 		return nil // Возвращаем nil в случае успеха
 	},
 }
