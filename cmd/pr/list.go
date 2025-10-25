@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"src/internal/api"
+	"src/internal/utils"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -19,7 +20,7 @@ var listCmd = &cobra.Command{
 func runList(cmd *cobra.Command, args []string) {
 	fmt.Print("Введите репозиторий (username/repo): ")
 	reader := bufio.NewReader(os.Stdin)
-	reponame := readLine(reader)
+	reponame := utils.ReadLine(reader)
 	body, err := api.GetPrList(reponame)
 	if err != nil {
 		fmt.Println("Ошибка при получении pull requests: ", err)

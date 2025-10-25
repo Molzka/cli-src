@@ -1,4 +1,4 @@
-package pr
+package utils
 
 import (
 	"bufio"
@@ -7,13 +7,13 @@ import (
 )
 
 // readLine читает одну строку из STDIN
-func readLine(reader *bufio.Reader) string {
+func ReadLine(reader *bufio.Reader) string {
 	input, _ := reader.ReadString('\n')
 	return strings.TrimSpace(input)
 }
 
 // parseCommaSeparatedList очищает список, введенный через запятую
-func parseCommaSeparatedList(input string) []string {
+func ParseCommaSeparatedList(input string) []string {
 	ids := strings.Split(input, ",")
 	cleanedIDs := make([]string, 0, len(ids))
 	for _, id := range ids {
@@ -26,7 +26,7 @@ func parseCommaSeparatedList(input string) []string {
 }
 
 // getCurrentGitBranch (бонус) пытается получить имя текущей ветки git
-func getCurrentGitBranch() string {
+func GetCurrentGitBranch() string {
 	cmd := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD")
 	output, err := cmd.Output()
 	if err != nil {

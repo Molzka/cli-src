@@ -6,6 +6,7 @@ import (
 	"os"
 	"src/internal/api"
 	"src/internal/config"
+	"src/internal/utils"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -51,7 +52,7 @@ var createCmd = &cobra.Command{
 
 		for {
 			fmt.Print("Вставьте название репозитория (username/repo): ")
-			reponame = readLine(reader)
+			reponame = utils.ReadLine(reader)
 			_, err := client.DoRequest("GET", fmt.Sprintf("/repos/%s", reponame), nil)
 			if err != nil {
 				fmt.Print("[Ошибка] Репозиторий не существует. Попробуйте снова.")
@@ -70,7 +71,7 @@ var createCmd = &cobra.Command{
 			fmt.Println("ℹ️ Заголовок PR не указан. Включен интерактивный режим.")
 			for {
 				fmt.Print("Title: ")
-				title = readLine(reader)
+				title = utils.ReadLine(reader)
 				if title == "" {
 					fmt.Println("   [Ошибка] Заголовок не может быть пустым. Попробуйте снова.")
 					continue
@@ -91,7 +92,7 @@ var createCmd = &cobra.Command{
 		if !cmd.Flags().Changed("body") {
 			// Промпт, только если флаг НЕ был установлен (даже если он был пустым)
 			fmt.Print("Description (optional): ")
-			description = readLine(reader)
+			description = utils.ReadLine(reader)
 		}
 		payload.Description = description
 
@@ -101,7 +102,7 @@ var createCmd = &cobra.Command{
 		sourceBranch, _ := cmd.Flags().GetString("head")
 		if sourceBranch == "" {
 			// Если флаг не указан, пытаемся получить текущую ветку
-			currentBranch := getCurrentGitBranch()
+			currentBranch := utils.GetCurrentGitBranch()
 			prompt := "Source Branch: "
 			if currentBranch != "" {
 				prompt = fmt.Sprintf("Source Branch (default: %s): ", currentBranch)
@@ -109,7 +110,7 @@ var createCmd = &cobra.Command{
 
 			for {
 				fmt.Print(prompt)
-				sourceBranch = readLine(reader)
+				sourceBranch = utils.ReadLine(reader)
 				if sourceBranch == "" && currentBranch != "" {
 					sourceBranch = currentBranch // Используем default
 				}
@@ -136,9 +137,9 @@ var createCmd = &cobra.Command{
 		reviewers, _ := cmd.Flags().GetStringSlice("reviewers")
 		if !cmd.Flags().Changed("reviewers") {
 			fmt.Print("Reviewer IDs (optional, через запятую): ")
-			reviewerInput := readLine(reader)
+			reviewerInput := utils.ReadLine(reader)
 			if reviewerInput != "" {
-				reviewers = parseCommaSeparatedList(reviewerInput)
+				reviewers = utils.ParseCommaSeparatedList(reviewerInput)
 			}
 		}
 		payload.ReviewerIDs = reviewers
@@ -154,7 +155,7 @@ var createCmd = &cobra.Command{
 			for {
 				// По умолчанию (N) - 'false', что создаст Draft
 				fmt.Print("Опубликовать сразу (не как черновик)? (y/N): ")
-				publishInput := strings.ToLower(readLine(reader))
+				publishInput := strings.ToLower(utils.ReadLine(reader))
 
 				if publishInput == "y" || publishInput == "yes" {
 					isDraft = false // (т.е. Publish = true)
