@@ -76,6 +76,16 @@ type Repository struct {
 	Parent        *RepositoryRef `json:"parent,omitempty"`
 }
 
+type CreatePullRequestBody struct {
+	Title        string   `json:"title"`
+	Description  string   `json:"description,omitempty"`
+	SourceBranch string   `json:"source_branch"`
+	TargetBranch string   `json:"target_branch"`
+	ForkRepoID   string   `json:"fork_repo_id,omitempty"`
+	ReviewerIDs  []string `json:"reviewer_ids,omitempty"`
+	Publish      bool     `json:"publish"`
+}
+
 type Organization struct {
 	ID   string `json:"id"`
 	Slug string `json:"slug"`
