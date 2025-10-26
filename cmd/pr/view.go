@@ -1,9 +1,7 @@
 package pr
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"src/internal/api"
 	"src/internal/utils"
 
@@ -11,18 +9,20 @@ import (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view",
-	Short: "Получить список pull requests",
+	Use:   "view <id>",
+	Short: "Посмотреть детали pull request",
 	Run:   runView,
 }
 
 func runView(cmd *cobra.Command, args []string) {
-	fmt.Print("Введите репозиторий (username/repo): ")
-	reader := bufio.NewReader(os.Stdin)
-	reponame := utils.ReadLine(reader)
-	fmt.Print("Введите slug вашего pull requests: ")
-	prGluf := utils.ReadLine(reader)
-	body, err := api.GetPullRequest(reponame, prGluf)
+	if len(args) != 1 {
+		fmt.Println("Ошибка. Введите ID pull request.")
+		return
+	}
+
+	prId := args[0]
+
+	body, err := api.GetPullRequest(prId)
 	if err != nil {
 		fmt.Println("Ошибка при получении pull requests: ", err)
 		return
@@ -40,8 +40,8 @@ func printPullRequest(body *api.PullRequest) {
 	fmt.Printf("│ Status:       %v\n", body.Status)
 	fmt.Printf("│ Branch:       %s -> %s\n", body.SourceBranch, body.TargetBranch)
 	fmt.Printf("│ Author:       %s\n", body.Author)
-	fmt.Printf("│ Created:      %v\n", formatDate(body.CreatedAt))
-	fmt.Printf("│ Updated:      %v\n", formatDate(body.UpdatedAt))
+	fmt.Printf("│ Created:      %v\n", utils.FormatDate(body.CreatedAt))
+	fmt.Printf("│ Updated:      %v\n", utils.FormatDate(body.UpdatedAt))
 	fmt.Printf("│ Repository:   %v\n", body.Repository)
 	fmt.Printf("└─────────────────────────────────────────────────────\n\n")
 }
