@@ -39,9 +39,15 @@ func printPullRequest(body *api.PullRequest) {
 	fmt.Printf("│ Description:  %v\n", body.Description)
 	fmt.Printf("│ Status:       %v\n", body.Status)
 	fmt.Printf("│ Branch:       %s -> %s\n", body.SourceBranch, body.TargetBranch)
-	fmt.Printf("│ Author:       %s\n", body.Author)
+
+	if body.Author != nil {
+		fmt.Printf("│ Author:       %s\n", body.Author["slug"])
+	}
+
 	fmt.Printf("│ Created:      %v\n", utils.FormatDate(body.CreatedAt))
 	fmt.Printf("│ Updated:      %v\n", utils.FormatDate(body.UpdatedAt))
-	fmt.Printf("│ Repository:   %v\n", body.Repository)
+	if body.Repository != nil {
+		fmt.Printf("│ Repository:   %v\n", body.Repository["slug"])
+	}
 	fmt.Printf("└─────────────────────────────────────────────────────\n\n")
 }
