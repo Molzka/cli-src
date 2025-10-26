@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"src/cmd/auth"
+	"src/cmd/issue"
 	"src/cmd/pr"
 	"src/cmd/repo"
 
@@ -21,4 +22,5 @@ func init() {
 	rootCmd.AddCommand(auth.AuthCmd)
 	rootCmd.AddCommand(repo.RepoCmd)
 	rootCmd.AddCommand(pr.PrCmd)
+	rootCmd.AddCommand(issue.IssueCmd)
 }

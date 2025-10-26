@@ -1,5 +1,7 @@
 package api
 
+import "time"
+
 type PullRequest struct {
 	ID           string            `json:"id"`
 	Slug         string            `json:"slug"`
@@ -162,7 +164,7 @@ type ForkRepositoryResponse struct {
 	Description  string               `json:"description"`
 	CloneURL     CloneURL             `json:"clone_url"`
 	Organization OrganizationEmbedded `json:"organization"`
-	Parent       *RepositoryEmbedded  `json:"parent,omitempty"`
+	Parent       *RepoEmbedded        `json:"parent,omitempty"`
 }
 
 type OrganizationEmbedded struct {
@@ -170,7 +172,109 @@ type OrganizationEmbedded struct {
 	Slug string `json:"slug"`
 }
 
-type RepositoryEmbedded struct {
+type ListIssuesAssignedToAuthenticatedUserResponse struct {
+	Issues        []Issue `json:"issues"`
+	NextPageToken string  `json:"next_page_token"`
+}
+
+type Issue struct {
+	ID          string                `json:"id"`
+	Slug        string                `json:"slug"`
+	Title       string                `json:"title"`
+	Description string                `json:"description"`
+	Status      IssueStatus           `json:"status"`
+	Author      UserEmbedded          `json:"author"`
+	UpdatedBy   UserEmbedded          `json:"updated_by"`
+	CreatedAt   time.Time             `json:"created_at"`
+	UpdatedAt   time.Time             `json:"updated_at"`
+	Assignee    UserEmbedded          `json:"assignee"`
+	Labels      []LabelEmbedded       `json:"labels"`
+	LinkedPRs   []PullRequestEmbedded `json:"linked_prs"`
+	Priority    Priority              `json:"priority"`
+	Visibility  IssueVisibility       `json:"visibility"`
+	Milestone   MilestoneEmbedded     `json:"milestone"`
+	Deadline    *time.Time            `json:"deadline,omitempty"`
+	StartedAt   *time.Time            `json:"started_at,omitempty"`
+	CompletedAt *time.Time            `json:"completed_at,omitempty"`
+}
+
+type IssueStatus struct {
+	ID         string     `json:"id"`
+	Slug       string     `json:"slug"`
+	Name       string     `json:"name"`
+	StatusType StatusType `json:"status_type"`
+}
+
+type StatusType string
+
+const (
+	StatusTypeInitial    StatusType = "initial"
+	StatusTypeInProgress StatusType = "in_progress"
+	StatusTypePaused     StatusType = "paused"
+	StatusTypeCompleted  StatusType = "completed"
+	StatusTypeCancelled  StatusType = "cancelled"
+)
+
+type LabelEmbedded struct {
+	ID    string `json:"id"`
+	Slug  string `json:"slug"`
+	Name  string `json:"name"`
+	Color string `json:"color"`
+}
+
+type PullRequestEmbedded struct {
 	ID   string `json:"id"`
 	Slug string `json:"slug"`
+}
+
+type Priority string
+
+const (
+	PriorityTrivial  Priority = "trivial"
+	PriorityMinor    Priority = "minor"
+	PriorityNormal   Priority = "normal"
+	PriorityCritical Priority = "critical"
+	PriorityBlocker  Priority = "blocker"
+)
+
+type IssueVisibility string
+
+const (
+	IssueVisibilityPublic  IssueVisibility = "public"
+	IssueVisibilityPrivate IssueVisibility = "private"
+)
+
+type MilestoneEmbedded struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+}
+
+type CreateIssueBody struct {
+	Title         string          `json:"title"`
+	Description   string          `json:"description,omitempty"`
+	StatusSlug    string          `json:"status_slug,omitempty"`
+	Priority      Priority        `json:"priority,omitempty"`
+	AssigneeID    string          `json:"assignee_id,omitempty"`
+	MilestoneID   string          `json:"milestone_id,omitempty"`
+	MilestoneSlug string          `json:"milestone_slug,omitempty"`
+	Visibility    IssueVisibility `json:"visibility,omitempty"`
+	LabelIDs      []string        `json:"label_ids,omitempty"`
+	LabelSlugs    []string        `json:"label_slugs,omitempty"`
+	LinkedPRIDs   []string        `json:"linked_pr_ids,omitempty"`
+	LinkedPRSlugs []string        `json:"linked_pr_slugs,omitempty"`
+	Deadline      string          `json:"deadline,omitempty"`
+}
+
+type Label struct {
+	ID    string `json:"id"`
+	Slug  string `json:"slug"`
+	Name  string `json:"name"`
+	Color string `json:"color"`
+}
+
+type Milestone struct {
+	ID     string `json:"id"`
+	Slug   string `json:"slug"`
+	Name   string `json:"name"`
+	Status string `json:"status"`
 }
