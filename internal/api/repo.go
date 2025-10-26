@@ -84,10 +84,10 @@ func CloneRepository(reponame, targetDir string) error {
 
 func ForkRepository(reponame string) error {
 	_, err := GetRepoInfo(reponame)
-	slugs := strings.Split(reponame, "/")
 	if err != nil {
 		return fmt.Errorf("failed to get repository info: %w", err)
 	}
+	slugs := strings.Split(reponame, "/")
 
 	path := fmt.Sprintf("/repos/%s/fork", reponame)
 
@@ -100,9 +100,7 @@ func ForkRepository(reponame string) error {
 		DefaultBranchOnly: false,
 	}
 
-	body, err := client.DoRequest("POST", path, forkBody)
-
-	fmt.Println(body)
+	_, _ = client.DoRequest("POST", path, forkBody)
 
 	return nil
 }

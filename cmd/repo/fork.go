@@ -9,7 +9,7 @@ import (
 
 var forkCmd = &cobra.Command{
 	Use:   "fork",
-	Short: "Сделать fork репозитория",
+	Short: "Сделать форк репозитория",
 
 	Run: runFork,
 }
@@ -22,5 +22,13 @@ func runFork(cmd *cobra.Command, args []string) {
 
 	reponame := args[0]
 
-	api.ForkRepository(reponame)
+	err := api.ForkRepository(reponame)
+
+	if err != nil {
+		fmt.Println("Ошибка при создании форка, ", err)
+		return
+	}
+
+	fmt.Println("Форк успешно создан!")
+
 }

@@ -12,7 +12,7 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Войти в систему",
+	Short: "Вывести список репозиториев организации",
 	Run:   runRepo,
 }
 
@@ -40,6 +40,7 @@ func PrintRepositoriesSummary(repos []api.Repository) {
 		}
 		fmt.Printf(" [%s]", repo.Visibility)
 		fmt.Printf(" (%s форков)", repo.Counters.Forks)
+		fmt.Printf(" (id: %s)", repo.ID)
 		fmt.Println()
 	}
 }

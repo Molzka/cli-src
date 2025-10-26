@@ -9,7 +9,7 @@ import (
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "Войти в систему",
+	Short: "Просмотр информации о репозитории",
 	Run:   runView,
 }
 

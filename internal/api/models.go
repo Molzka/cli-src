@@ -68,3 +68,109 @@ const (
 	ReviewDecisionBlock   ReviewDecision = "block"
 	ReviewDecisionAbstain ReviewDecision = "abstain"
 )
+
+type ListRepositoriesResponse struct {
+	Repositories  []Repository `json:"repositories"`
+	NextPageToken string       `json:"next_page_token,omitempty"`
+}
+
+type Repository struct {
+	ID            string         `json:"id"`
+	Name          string         `json:"name"`
+	Slug          string         `json:"slug"`
+	Description   string         `json:"description"`
+	Visibility    string         `json:"visibility"`
+	DefaultBranch string         `json:"default_branch"`
+	Organization  Organization   `json:"organization"`
+	CloneURL      CloneURL       `json:"clone_url"`
+	Counters      RepoCounters   `json:"counters"`
+	LastUpdated   string         `json:"last_updated"`
+	Language      *Language      `json:"language,omitempty"`
+	Parent        *RepositoryRef `json:"parent,omitempty"`
+}
+
+type CreatePullRequestBody struct {
+	Title        string   `json:"title"`
+	Description  string   `json:"description,omitempty"`
+	SourceBranch string   `json:"source_branch"`
+	TargetBranch string   `json:"target_branch"`
+	ForkRepoID   string   `json:"fork_repo_id,omitempty"`
+	ReviewerIDs  []string `json:"reviewer_ids,omitempty"`
+	Publish      bool     `json:"publish"`
+}
+
+type Organization struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+}
+
+type CloneURL struct {
+	HTTPS string `json:"https"`
+	SSH   string `json:"ssh"`
+}
+
+type RepoCounters struct {
+	Forks        string `json:"forks"`
+	PullRequests string `json:"pull_requests"`
+	Issues       string `json:"issues"`
+	Tags         string `json:"tags"`
+	Branches     string `json:"branches"`
+}
+
+type Language struct {
+	Name  string `json:"name"`
+	Color string `json:"color"`
+}
+
+type RepositoryRef struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+}
+
+type InitRepoSettings struct {
+	DefaultBranch       string   `json:"default_branch,omitempty"`
+	CreateReadme        bool     `json:"create_readme"`
+	GitignorePresets    []string `json:"gitignore_presets,omitempty"`
+	LicenseSlug         string   `json:"license_slug,omitempty"`
+	SrcYamlTemplateSlug string   `json:"src_yaml_template_slug,omitempty"`
+}
+
+type TemplatingOptions struct {
+	TemplateID string `json:"template_id"`
+}
+
+type CreateRepositoryBody struct {
+	Name              string             `json:"name"`
+	Slug              string             `json:"slug"`
+	Description       string             `json:"description,omitempty"`
+	Visibility        string             `json:"visibility,omitempty"`
+	InitSettings      *InitRepoSettings  `json:"init_settings,omitempty"`
+	TemplatingOptions *TemplatingOptions `json:"templating_options,omitempty"`
+}
+
+type ForkRepositoryBody struct {
+	OrgSlug           string `json:"org_slug,omitempty"`
+	OrgID             string `json:"org_id,omitempty"`
+	Slug              string `json:"slug,omitempty"`
+	DefaultBranchOnly bool   `json:"default_branch_only,omitempty"`
+}
+
+type ForkRepositoryResponse struct {
+	ID           string               `json:"id"`
+	Name         string               `json:"name"`
+	Slug         string               `json:"slug"`
+	Description  string               `json:"description"`
+	CloneURL     CloneURL             `json:"clone_url"`
+	Organization OrganizationEmbedded `json:"organization"`
+	Parent       *RepositoryEmbedded  `json:"parent,omitempty"`
+}
+
+type OrganizationEmbedded struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+}
+
+type RepositoryEmbedded struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+}
